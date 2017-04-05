@@ -9,15 +9,40 @@ public class PlayerController : NetworkBehaviour
     public GameObject dotPrefab;
     public Transform dotSpawn;
 
+    public GameObject whiteCircle;
+    public GameObject blackCircle;
+    public GameObject redCircle;
+    public GameObject orangeCircle;
+    public GameObject yellowCircle;
+    public GameObject greenCircle;
+    public GameObject darkGreenCircle;
+    public GameObject blueCircle;
+    public GameObject cyanCircle;
+    public GameObject purpleCircle;
+    public GameObject pinkCircle;
+
+
+
     public GameObject circlePrefab;
     public Transform circleSpawn;
 
     private GameObject[] g;
 
+    public GameObject o;
+    private GameObject p;
+
+    GameObject c;
+
+    int count = 0;
+    [SyncVar] Color color;
+
     // Use this for initialization
     void Start()
     {
+        c = dotPrefab;
         g = new GameObject[2];
+        color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1);
+            //GameObject.FindGameObjectWithTag("Egg").GetComponent<SpriteRenderer>().color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1);
     }
 
     // Update is called once per frame
@@ -27,6 +52,13 @@ public class PlayerController : NetworkBehaviour
         if (!isLocalPlayer)
         {
             return;
+        }
+
+        if (count == 0)
+        {
+            p = (GameObject)Instantiate(o, circleSpawn.position, circleSpawn.rotation);
+            NetworkServer.Spawn(p);
+            count = 1;
         }
 
         //var x = Input.GetAxis("Horizontal") * Time.deltaTime * 150.0f;
@@ -41,25 +73,25 @@ public class PlayerController : NetworkBehaviour
         }
         if (Input.GetKey(KeyCode.W))
         {
-            
             CmdUp();
             CmdDraw();
+
         }
         if (Input.GetKey(KeyCode.A))
         {
-            
             CmdLeft();
             CmdDraw();
+
         }
         if (Input.GetKey(KeyCode.S))
         {
             
-            CmdDown();
+            CmdDown();            
             CmdDraw();
+
         }
         if (Input.GetKey(KeyCode.D))
         {
-            
             CmdRight();
             CmdDraw();
         }
@@ -75,11 +107,8 @@ public class PlayerController : NetworkBehaviour
     [Command]
     void CmdFire()
     {
-        var dot = (GameObject)Instantiate(dotPrefab, dotSpawn.position, dotSpawn.rotation);
-
-        dot.GetComponent<Rigidbody2D>().velocity = dot.transform.forward * 6;
+        var dot = (GameObject)Instantiate(c, dotSpawn.position, dotSpawn.rotation);
         NetworkServer.Spawn(dot);
-
     }
 
     [Command]
@@ -89,8 +118,6 @@ public class PlayerController : NetworkBehaviour
             Destroy(s);
 
         var dot = (GameObject)Instantiate(circlePrefab, circleSpawn.position, circleSpawn.rotation);
-
-        dot.GetComponent<Rigidbody2D>().velocity = dot.transform.forward * 6;
         NetworkServer.Spawn(dot);
 
         Destroy(dot, 0.05f);
@@ -102,36 +129,63 @@ public class PlayerController : NetworkBehaviour
         foreach (GameObject s in g)
             Destroy(s);
 
-
         var dot = (GameObject)Instantiate(circlePrefab, circleSpawn.position, circleSpawn.rotation);
-
-        dot.GetComponent<Rigidbody2D>().velocity = dot.transform.forward * 6;
         NetworkServer.Spawn(dot);
         g[0] = dot;
     }
 
     void CmdUp()
     {
+        p.transform.Translate(0, Time.deltaTime * 3.0f, 0);
         this.transform.Translate(0, Time.deltaTime * 3.0f, 0);
     }
 
     void CmdLeft()
     {
+        p.transform.Rotate(0, 0, Time.deltaTime * 150.0f);
         this.transform.Rotate(0, 0, Time.deltaTime * 150.0f);
     }
 
     void CmdDown()
     {
+        p.transform.Translate(0, Time.deltaTime * -3.0f, 0);
         this.transform.Translate(0, Time.deltaTime * -3.0f, 0);
     }
 
     void CmdRight()
     {
+        p.transform.Rotate(0, 0, Time.deltaTime * -150.0f);
         this.transform.Rotate(0, 0, Time.deltaTime * -150.0f);
     }
 
     public override void OnStartLocalPlayer()
     {
         this.gameObject.GetComponent<SpriteRenderer>().color = Color.green;
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.name == "BlackCircle")
+            c = blackCircle;
+        if (col.name == "WhiteCircle")
+            c = whiteCircle;
+        if (col.name == "RedCircle")
+            c = redCircle;
+        if (col.name == "OrangeCircle")
+            c = orangeCircle;
+        if (col.name == "YellowCircle")
+            c = yellowCircle;
+        if (col.name == "GreenCircle")
+            c = greenCircle;
+        if (col.name == "DarkGreenCircle")
+            c = darkGreenCircle;
+        if (col.name == "BlueCircle")
+            c = blueCircle;
+        if (col.name == "CyanCircle")
+            c = cyanCircle;
+        if (col.name == "PurpleCircle")
+            c = purpleCircle;
+        if (col.name == "PinkCircle")
+            c = pinkCircle;
     }
 }
