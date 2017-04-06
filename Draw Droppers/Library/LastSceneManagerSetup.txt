@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/DrawDroppers.unity
+- path: Assets/DropMode.unity
   isLoaded: 1
   isActive: 1

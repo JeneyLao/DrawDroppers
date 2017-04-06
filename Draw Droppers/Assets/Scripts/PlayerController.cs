@@ -26,6 +26,9 @@ public class PlayerController : NetworkBehaviour
     public GameObject circlePrefab;
     public Transform circleSpawn;
 
+    public GameObject ballPrefab;
+    public Transform ballSpawn;
+
     private GameObject[] g;
 
     public GameObject o;
@@ -100,8 +103,51 @@ public class PlayerController : NetworkBehaviour
         {
             //CmdDraw2();
         }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            GameObject[] g = GameObject.FindGameObjectsWithTag("Ball");
+            if (g.Length == 0)
+                CmdDrop();
+        }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            CmdDeleteDrop();
+        }
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            Debug.Log("Pressed Y");
+            CmdDeleteDot();
+        }
             
 
+    }
+    [Command]
+    void CmdDrop()
+    {
+        var ball = (GameObject)Instantiate(ballPrefab, ballSpawn.position, ballSpawn.rotation);
+        NetworkServer.Spawn(ball);
+    }
+
+    [Command]
+    void CmdDeleteDot()
+    {
+        Debug.Log("went in here");
+        GameObject[] a = GameObject.FindGameObjectsWithTag("Dot");
+        foreach (GameObject go in a)
+        {
+            NetworkServer.Destroy(go.gameObject);
+        }
+    }
+
+    [Command]
+    void CmdDeleteDrop()
+    {
+        GameObject[] g = GameObject.FindGameObjectsWithTag("Ball");
+        foreach (GameObject go in g)
+        {
+            NetworkServer.Destroy(go.gameObject);
+        }
     }
 
     [Command]
